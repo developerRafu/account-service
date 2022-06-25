@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,8 +24,9 @@ import java.net.URI;
 public class UserController {
     private final UserService service;
     private final UserMapper mapper;
-    private final static HttpStatus created = HttpStatus.CREATED;
+    private static final HttpStatus created = HttpStatus.CREATED;
 
+    @Validated
     @PostMapping
     public ResponseEntity<URI> postUser(@RequestBody @Valid UserRequest request) {
         final var user = mapper.toUser(request);
