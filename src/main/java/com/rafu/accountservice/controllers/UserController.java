@@ -1,7 +1,9 @@
 package com.rafu.accountservice.controllers;
 
+import com.rafu.accountservice.errors.NotFoundException;
 import com.rafu.accountservice.mappers.UserMapper;
 import com.rafu.accountservice.models.rest.UserRequest;
+import com.rafu.accountservice.models.rest.UserResponse;
 import com.rafu.accountservice.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,15 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
 
+@Validated
 @RestController
 @RequestMapping("/v1/users")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -26,7 +26,6 @@ public class UserController {
     private final UserMapper mapper;
     private static final HttpStatus created = HttpStatus.CREATED;
 
-    @Validated
     @PostMapping
     public ResponseEntity<URI> postUser(@RequestBody @Valid UserRequest request) {
         final var user = mapper.toUser(request);
@@ -39,5 +38,13 @@ public class UserController {
                 .toUri();
 
         return ResponseEntity.status(created).body(uri);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponse> findById(@PathVariable Long id) {
+        return service
+                .findById(id)
+                .map(user -> ResponseEntity.ok(mapper.toResponse(user)))
+                .orElseThrow(() -> new NotFoundException("User"));
     }
 }

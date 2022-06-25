@@ -4,15 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
 public class UserRequest {
-    @Min(value = 5, message = "nome deve conter, pelo menos, 5 caracteres")
+    @Size(min = 8, max = 50, message = "Invalid name.")
     private String name;
-    @Email(message = "preencha com um email válido")
+    @Email(message = "Invalid email.")
     private String email;
-    @Min(value = 8, message = "senha deve conter, pelo menos, 8 caracteres")
+    @Size(min = 8, max = 30,message = "Invalid password.")
     private String password;
 }

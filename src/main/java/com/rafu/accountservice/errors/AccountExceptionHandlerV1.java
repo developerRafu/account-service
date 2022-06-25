@@ -24,6 +24,7 @@ public class AccountExceptionHandlerV1 {
     private final MessageLoader messageLoader;
 
     private static final String BAD_FIELD = "badFields";
+    private static final String NOT_FOUND = "notFound";
     private static final HttpStatus BAD_REQUEST = HttpStatus.BAD_REQUEST;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -38,7 +39,18 @@ public class AccountExceptionHandlerV1 {
         return message;
     }
 
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public Message handleNotFoundException(final NotFoundException ex, final HttpServletRequest request) {
+        final var message = new Message();
+        final var text = messageLoader.get(NOT_FOUND, ex.getMessage());
+        message.setText(text);
+        message.setType(MessageEnum.ERROR);
+        message.setCode(HttpStatus.NOT_FOUND.value());
+        return message;
+    }
+
     private List<String> getFields(MethodArgumentNotValidException ex) {
-        return ex.getFieldErrors().stream().map(FieldError::getField).collect(Collectors.toList());
+        return ex.getFieldErrors().stream().map(FieldError::getDefaultMessage).collect(Collectors.toList());
     }
 }
