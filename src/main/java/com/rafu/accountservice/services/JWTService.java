@@ -49,7 +49,14 @@ public class JWTService {
         return username != null && expirationDate != null && now.after(expirationDate);
     }
 
-    private Claims getClaims(final String token) {
+    public boolean isExpiredToken(final Claims claims) {
+        String username = claims.getSubject();
+        Date expirationDate = claims.getExpiration();
+        Date now = new Date(System.currentTimeMillis());
+        return username != null && expirationDate != null && now.after(expirationDate);
+    }
+
+    public Claims getClaims(final String token) {
         final var tokenWithoutBearer = token.substring(7);
         try {
             return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(tokenWithoutBearer).getBody();

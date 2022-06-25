@@ -15,4 +15,5 @@ public class Message {
     private MessageEnum type;
     private Integer code;
     private List<String> details;
+    private TokenResponse auth;
 }

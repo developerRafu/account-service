@@ -26,6 +26,7 @@ public class AccountExceptionHandlerV1 {
     private static final String BAD_FIELD = "badFields";
     private static final String NOT_FOUND = "notFound";
     private static final String INVALID_TOKEN = "invalidToken";
+    private static final String INVALID_PASSWORD = "invalidPassword";
     private static final HttpStatus BAD_REQUEST = HttpStatus.BAD_REQUEST;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -59,6 +60,17 @@ public class AccountExceptionHandlerV1 {
         message.setText(text);
         message.setType(MessageEnum.ERROR);
         message.setCode(HttpStatus.UNAUTHORIZED.value());
+        return message;
+    }
+
+    @ExceptionHandler(WrongPasswordException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public Message handleWrongPasswordException(final WrongPasswordException ex, final HttpServletRequest request) {
+        final var message = new Message();
+        final var text = messageLoader.get(INVALID_PASSWORD, ex.getMessage());
+        message.setText(text);
+        message.setType(MessageEnum.ERROR);
+        message.setCode(HttpStatus.FORBIDDEN.value());
         return message;
     }
 

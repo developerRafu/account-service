@@ -4,6 +4,7 @@ import com.rafu.accountservice.errors.NotFoundException;
 import com.rafu.accountservice.mappers.UserMapper;
 import com.rafu.accountservice.models.rest.UserRequest;
 import com.rafu.accountservice.models.rest.UserResponse;
+import com.rafu.accountservice.services.AuthService;
 import com.rafu.accountservice.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 
 @Validated
@@ -24,6 +26,7 @@ import java.net.URI;
 public class UserController {
     private final UserService service;
     private final UserMapper mapper;
+    private final AuthService authService;
     private static final HttpStatus created = HttpStatus.CREATED;
 
     @PostMapping
@@ -41,7 +44,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> findById(@PathVariable Long id) {
+    public ResponseEntity<UserResponse> findById(@RequestHeader @NotNull final String authorization, @PathVariable @Valid @NotNull Long id) {
+        authService.isAuthorized(authorization);
         return service
                 .findById(id)
                 .map(user -> ResponseEntity.ok(mapper.toResponse(user)))
