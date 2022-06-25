@@ -25,6 +25,7 @@ public class AccountExceptionHandlerV1 {
 
     private static final String BAD_FIELD = "badFields";
     private static final String NOT_FOUND = "notFound";
+    private static final String INVALID_TOKEN = "invalidToken";
     private static final HttpStatus BAD_REQUEST = HttpStatus.BAD_REQUEST;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -47,6 +48,17 @@ public class AccountExceptionHandlerV1 {
         message.setText(text);
         message.setType(MessageEnum.ERROR);
         message.setCode(HttpStatus.NOT_FOUND.value());
+        return message;
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public Message handleInvalidTokenException(final InvalidTokenException ex, final HttpServletRequest request) {
+        final var message = new Message();
+        final var text = messageLoader.get(INVALID_TOKEN);
+        message.setText(text);
+        message.setType(MessageEnum.ERROR);
+        message.setCode(HttpStatus.UNAUTHORIZED.value());
         return message;
     }
 
