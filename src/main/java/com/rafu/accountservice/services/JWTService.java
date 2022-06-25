@@ -4,6 +4,7 @@ import com.rafu.accountservice.errors.InvalidTokenException;
 import com.rafu.accountservice.models.rest.TokenResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -34,14 +35,14 @@ public class JWTService {
     }
 
     public boolean isValidToken(final String token) {
-        Claims claims = getClaims(token.substring(7));
+        Claims claims = getClaims(token);
         String username = claims.getSubject();
         Date expirationDate = claims.getExpiration();
         return username != null && expirationDate != null;
     }
 
     public boolean isExpiredToken(final String token) {
-        Claims claims = getClaims(token.substring(7));
+        Claims claims = getClaims(token);
         String username = claims.getSubject();
         Date expirationDate = claims.getExpiration();
         Date now = new Date(System.currentTimeMillis());
@@ -49,18 +50,16 @@ public class JWTService {
     }
 
     private Claims getClaims(final String token) {
+        final var tokenWithoutBearer = token.substring(7);
         try {
-            return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody();
-        } catch (Exception e) {
+            return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(tokenWithoutBearer).getBody();
+        } catch (MalformedJwtException e) {
             throw new InvalidTokenException();
         }
     }
 
     public String getUsername(String token) {
         Claims claims = getClaims(token);
-        if (claims != null) {
-            return claims.getSubject();
-        }
-        return null;
+        return claims.getSubject();
     }
 }

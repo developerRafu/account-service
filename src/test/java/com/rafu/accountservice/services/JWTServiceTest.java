@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static com.rafu.accountservice.helpers.ConstantsHelper.MOCKED_TOKEN;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
@@ -39,7 +40,7 @@ class JWTServiceTest {
     class isValidTokenTests {
         @Test
         void should_return_true_when_token_is_valid() {
-            final var result = service.isValidToken(ConstantsHelper.MOCKED_TOKEN);
+            final var result = service.isValidToken(MOCKED_TOKEN);
             assertTrue(result);
         }
 
@@ -48,18 +49,34 @@ class JWTServiceTest {
             assertThrows(InvalidTokenException.class, () -> service.isValidToken("Bearer token"));
         }
     }
+
     @DisplayName("is valid token tests")
     @Nested
     class isExpiredTokenTests {
         @Test
         void should_return_true_when_token_is_expired() {
-            final var result = service.isExpiredToken(ConstantsHelper.MOCKED_TOKEN);
+            final var result = service.isExpiredToken(MOCKED_TOKEN);
             assertTrue(result);
         }
 
         @Test
         void should_throw_exception_when_token_is_invalid() {
             assertThrows(InvalidTokenException.class, () -> service.isValidToken("Bearer token"));
+        }
+    }
+
+    @DisplayName("Get Username Tests")
+    @Nested
+    class GetUsernameTests {
+        @Test
+        void should_return_a_valid_email() {
+            final var result = service.getUsername(MOCKED_TOKEN);
+            assertEquals("mail@mail.com", result);
+        }
+
+        @Test
+        void should_return_exception_when_token_is_invalid() {
+            assertThrows(InvalidTokenException.class, () -> service.getUsername("Bearer token"));
         }
     }
 }
