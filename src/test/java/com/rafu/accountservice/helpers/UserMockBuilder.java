@@ -17,7 +17,7 @@ public class UserMockBuilder {
         user.setId(1L);
         user.setName("Account Name");
         user.setEmail("account@mail.com");
-        user.setPassword("account123");
+        user.setPassword("$2a$10$/U7A3PnP.3qy2jAJYsqyfu5YAdjGrIDV59hk.DJn/XNwC3zEQxC4y");
         user.setProfile(ADMIN);
         return this;
     }
