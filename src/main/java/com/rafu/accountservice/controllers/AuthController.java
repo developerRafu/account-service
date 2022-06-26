@@ -1,6 +1,5 @@
 package com.rafu.accountservice.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rafu.accountservice.models.enums.MessageEnum;
 import com.rafu.accountservice.models.rest.Message;
 import com.rafu.accountservice.models.rest.TokenResponse;
@@ -12,7 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
@@ -26,7 +30,6 @@ import java.util.List;
 public class AuthController {
     private final AuthService authService;
     private final MessageLoader loader;
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @GetMapping
     public ResponseEntity<TokenResponse> getAuth(@RequestHeader @Valid @NotNull final String authorization) {
